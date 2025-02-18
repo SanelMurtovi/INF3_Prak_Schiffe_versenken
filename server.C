@@ -23,20 +23,18 @@ public:
 
     myServerShip(int portNmb, int bSize):TCPserver(portNmb, bSize){
     world = new TASK3::World();
-    cout <<"Server gestartet!" << endl;
-    cout << "Das Spielfeld ist dimensioniert (10x10), bestehend aus folgenden Schifflaengen: 1xFuenf, 2xVier, 3xDrei und 4xZwei"<<endl;
+    cout <<"Server started!" << endl;
+    cout << "The board is 10x10 in size and contains:" << endl << "1x ship with length 5, 2x length 4, 3x length 3 and 4x length 2" << endl;
     }
-    ~myServerShip(){};
+    ~myServerShip(){ delete world;}
 
 private:
     myServerShip();
-    TASK3::World *world;
+    TASK3::World* world = nullptr;
 
 protected:
 
-string myResponse(string input){
-    int x = -1,y = -1;
-    stringstream o;
+string myResponse(string input)override{
 
     if(input.compare(0,7,"NEWGAME") == 0){
         delete world;
@@ -44,10 +42,19 @@ string myResponse(string input){
         return string("NEWGAME");
    }
 
-    if(sscanf(input.c_str(), "%d %d", &x, &y) !=2)
-    return string ("ERROR: Invalid input");
+    else if(input.compare(0,6,"COORD[")== 0){
+        int x=-1, y=-1;
 
+    if (sscanf(input.c_str(), "COORD[%d;%d]", &x, &y) !=2){
+        return "ERROR: Invalid input format: " + input;
+ }
     TASK3::ShootResult result = world -> shoot(x,y);
+
+    cout << "-----------------------------------" << endl;
+    cout << "Shot on coordinates (" << x << "," << y << "):" << endl;
+    cout << "Board after this shot:" << endl;
+    world -> printBoard();
+    cout << "-----------------------------------" << endl << endl;
 
     switch (result){
         case TASK3::WATER:
@@ -56,57 +63,34 @@ string myResponse(string input){
             return "HIT";
         case TASK3::SHIP_DESTROYED:
             return "SHIP DESTROYED";
-        case TASK3::ALL_SHIPS_DESTROYED:
-            return "ALL SHIPS DESTROYED, TERMINATING SESSION";
+        case TASK3::GAME_OVER:
+            /* Ueberpruefen, wie das Spielfeld im Endstand aussieht
+            cout << "-----------------------------------" << endl;
+            cout << "ALL SHIPS HIT - FINAL RESULT:" << endl;
+            world -> printBoard();
+            cout << "-----------------------------------" << endl << endl;
+            */
+            return "GAME OVER";
         default:
             return "ERROR, UNKNOWN RESULT";
 
         }
-}
-
+        }
+    else {
+        return "ERROR: Invalid input format: " + input;
+        }
+    }
 };
 
 
 
 
-/*myServerShip::~myServerShip(){
-}
-
-myServerShip::myServerShip(int portNmb, int bSize) : TCPserver(portNmb, bSize){
-
-}*/
-
 int main(){
 	srand(time(nullptr));
 	myServerShip srv(2027,25); //Instanziiert mit den parametriseriten Konstruktor
 	srv.run();
+	return 0;
 }
 
 
-/*protected:
-string myResponse(string input) override {
-    int x= -1, y = -1;
 
-    if(input.compare(0,7,"NEWGAME")==0){
-    delete world;
-    world = new TASK3::World();
-    return string("DONE");
-    }
-
-    if(input.compare(0,6,"COORD[")==0)[
-        if (sscanf (input.c str(), "COORD[%d,%d], &x, &y) !=2){
-            return string("Error. Could not read coord-data.");
-            }
-
- if(input.compare(0,6,"COORD[") == 0){
-        e = sscanf(input.c_str(),"COORD[%i,%i]",&x,&y);
-        if(e != 2){
-            return string("COULD NOT READ COORDINATES.");
-        }
-        o << "SUMME[" << (x+y) << "]";
-        return (o.str());
-    }
-
-    return string("#"+input+"#");
-}
-}*/
