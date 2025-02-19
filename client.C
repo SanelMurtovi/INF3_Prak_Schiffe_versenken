@@ -144,6 +144,13 @@ int tactic1(){
             msg = "COORD[" + to_string(j) + ";" + to_string(i) + "]";
             c.sendData(msg);
             msg = c.receive(32);
+
+            if(msg == "ERROR BORDER"){
+                cout << "Client: Out-of-bounds coordinate => (" << j << ";" << i << ")" << endl;
+                //Der Fehlerabfang soll nichts dagegen machen, da von TASK 3 nur "MISS" ausgegeben wird und nur das Ergebnis verfaelscht wird
+                //Es wird hier nur darauf hingewiesen, dass die Nachrichten im Client ueberarbeitet werden muessen
+                continue;
+            }
             if(msg == "GAME OVER"){
                 return attemps;
             }
@@ -173,6 +180,14 @@ int tactic2(){
                 c.sendData(msg);
 
                 msg = c.receive(64);
+
+                if(msg == "ERROR BORDER"){
+                cout << "Client: Out-of-bounds coordinate => (" << j << ";" << i << ")" << endl;
+                //Der Fehlerabfang soll nichts dagegen machen, da von TASK 3 nur "MISS" ausgegeben wird und nur das Ergebnis verfaelscht wird
+                //Es wird hier nur darauf hingewiesen, dass die Nachrichten im Client ueberarbeitet werden muessen
+                continue;
+                }
+
                 if(msg == "GAME OVER"){
                     return attemps;
                 }
@@ -189,6 +204,14 @@ int tactic2(){
                 c.sendData(msg);
 
                 msg = c.receive(64);
+
+                if(msg == "ERROR BORDER"){
+                cout << "Client: Out-of-bounds coordinate => (" << j << ";" << i << ")" << endl;
+                //Der Fehlerabfang soll nichts dagegen machen, da von TASK 3 nur "MISS" ausgegeben wird und nur das Ergebnis verfaelscht wird
+                //Es wird hier nur darauf hingewiesen, dass die Nachrichten im Client ueberarbeitet werden muessen
+                continue;
+                }
+
                 if(msg == "GAME OVER"){
                     return attemps;
                 }
@@ -231,6 +254,14 @@ int tactic3(){
         c.sendData(msg);
 
         string reply = c.receive(64);
+
+        if(reply == "ERROR BORDER"){
+            cout << "Client: Out-of-bounds coordinate => (" << x << ";" << y << ")" << endl;
+            //Der Fehlerabfang soll nichts dagegen machen, da von TASK 3 nur "MISS" ausgegeben wird und nur das Ergebnis verfaelscht wird
+            //Es wird hier nur darauf hingewiesen, dass die Nachrichten im Client ueberarbeitet werden muessen
+            continue;
+        }
+
         if(reply == "GAME OVER"){
             return attempts;
         }
@@ -307,6 +338,14 @@ int tactic4(){
         if(!visited[y][x]){
             //Schiessen auf Felder die noch nicht beschossen worden sind
             string r = shoot(x,y); //r enthaelt die Antwort des Servers und ruft das obige Lambda auf
+
+            if(r == "ERROR BORDER"){
+                cout << "Client: Out-of-bounds coordinate => (" << x << ";" << y << ")" << endl;
+                //Der Fehlerabfang soll nichts dagegen machen, da von TASK 3 nur "MISS" ausgegeben wird und nur das Ergebnis verfaelscht wird
+                //Es wird hier nur darauf hingewiesen, dass die Nachrichten im Client ueberarbeitet werden muessen
+                continue;
+            }
+
             if(r == "GAME OVER"){
                 return attempts;
             } else if(r == "HIT" || r == "SHIP_HIT" || r == "SHIP DESTROYED"){
@@ -325,6 +364,13 @@ int tactic4(){
                     int fy = front.second;
                     if(!visited[fy][fx]){ //Nur schiessen wo noch nicht geschossen wurde
                         string r2 = shoot(fx,fy); //Wird beschossen und Antwort "r2" wird erhalten
+
+                        if(r2 == "ERROR BORDER"){
+                        cout << "Client: Out-of-bounds coordinate => (" << fx << ";" << fy << ")" << endl;
+                        //Der Fehlerabfang soll nichts dagegen machen, da von TASK 3 nur "MISS" ausgegeben wird und nur das Ergebnis verfaelscht wird
+                        //Es wird hier nur darauf hingewiesen, dass die Nachrichten im Client ueberarbeitet werden muessen
+                            continue;
+                        }
                         if(r2 == "GAME OVER"){
                             return attempts;
                         } else if(r2 == "HIT" || r2 == "SHIP_HIT"){ //Falls ein weitere Treffer erzielt wird, wird die Warteschlange erweitert

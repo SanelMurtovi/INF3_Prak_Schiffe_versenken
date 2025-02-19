@@ -48,6 +48,11 @@ string myResponse(string input)override{
     if (sscanf(input.c_str(), "COORD[%d;%d]", &x, &y) !=2){
         return "ERROR: Invalid input format: " + input;
  }
+
+    if(x < 1 || x > 10 || y < 1 || y > 10){
+        return "ERROR BORDER";
+    }
+
     TASK3::ShootResult result = world -> shoot(x,y);
 
     cout << "-----------------------------------" << endl;
